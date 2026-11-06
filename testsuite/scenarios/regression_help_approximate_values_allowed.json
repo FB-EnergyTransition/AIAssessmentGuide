@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "regression",
+    "llm",
+    "verein",
+    "chat",
+    "help"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "id": "regression_help_approximate_values_allowed",
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "help",
+      "action": "question_help",
+      "payload": {
+        "question_id": "club_type",
+        "text": "Muss ich das alles genau wissen oder reichen ungefähre Angaben?"
+      },
+      "assertions": [
+        {
+          "path": "/answers",
+          "op": "eq",
+          "expected": {}
+        },
+        {
+          "path": "/current_question/question_id",
+          "op": "eq",
+          "expected": "club_type"
+        },
+        {
+          "path": "/chat_messages/1/role",
+          "op": "eq",
+          "expected": "assistant"
+        },
+        {
+          "path": "/chat_messages/1/content",
+          "op": "not_contains",
+          "expected": "nicht ausreichend"
+        },
+        {
+          "path": "/chat_messages/1/content",
+          "op": "min_length",
+          "expected": 60
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

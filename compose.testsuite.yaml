@@ -1,0 +1,72 @@
+name: guideos-testsuite
+
+x-test-build: &test-build
+  context: .
+  dockerfile: Dockerfile.testsuite
+  target: runtime
+  args:
+    GUIDEOS_TESTSUITE_GIT_COMMIT: ${GUIDEOS_TESTSUITE_GIT_COMMIT:-unknown}
+    GUIDEOS_TESTSUITE_GIT_BRANCH: ${GUIDEOS_TESTSUITE_GIT_BRANCH:-unknown}
+    GUIDEOS_TESTSUITE_GIT_DIRTY: ${GUIDEOS_TESTSUITE_GIT_DIRTY:-unknown}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: guideos_test_runs
+      POSTGRES_USER: testsuite
+      POSTGRES_PASSWORD: isolated-tests-only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testsuite -d guideos_test_runs"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - results-db:/var/lib/postgresql/data
+
+  api:
+    build: *test-build
+    command: ["uv", "run", "--no-sync", "python", "-m", "testsuite.lifecycle"]
+    # Tool servers of packs with tools come from an overlay file that adds the
+    # service and GUIDEOS_TESTSUITE_MCP_URL__<DOMAIN_ID>/_TOKEN__<DOMAIN_ID>.
+    volumes:
+      - target-manifest:/manifest
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import pathlib,urllib.request; assert pathlib.Path('/manifest/target.json').exists(); urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=2)"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  runner:
+    build: *test-build
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    environment:
+      GUIDEOS_TESTSUITE_DATABASE_URL: postgresql://testsuite:isolated-tests-only@postgres:5432/guideos_test_runs
+    entrypoint: ["uv", "run", "--no-sync", "python", "-m", "testsuite.runner", "--base-url", "http://api:8000", "--target-manifest", "/manifest/target.json", "--allow-host", "api", "--results-dir", "/results"]
+    command: ["--report", "html"]
+    volumes:
+      - target-manifest:/manifest:ro
+      - ./.guideos/testsuite-docker:/results
+
+  checks:
+    profiles: ["verification"]
+    build:
+      <<: *test-build
+      target: verification
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GUIDEOS_TESTSUITE_DATABASE_URL: postgresql://testsuite:isolated-tests-only@postgres:5432/guideos_test_runs
+
+networks:
+  default:
+    internal: true
+
+volumes:
+  results-db:
+  target-manifest:

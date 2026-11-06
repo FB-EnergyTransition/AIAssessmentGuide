@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "id": "verein_unknown_and_revision",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "deterministic",
+    "verein",
+    "revision"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "public_grants"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "revise",
+      "action": "revise_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "membership_fees"
+      },
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "review"
+        },
+        {
+          "path": "/answers/founded_year/normalized_value",
+          "op": "eq",
+          "expected": null
+        }
+      ]
+    },
+    {
+      "id": "finish",
+      "action": "complete",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "completed"
+        },
+        {
+          "path": "/result/reason_codes",
+          "op": "eq",
+          "expected": [
+            "VOLUNTEERS_AT_RISK",
+            "MISSING_BUDGET"
+          ]
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

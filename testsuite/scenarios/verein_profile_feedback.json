@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "id": "verein_profile_feedback",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "deterministic",
+    "verein",
+    "profile",
+    "feedback"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": false,
+  "assertions": [],
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": []
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1980
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "public_grants"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "tight"
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "complete",
+      "action": "complete",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "completed"
+        }
+      ]
+    },
+    {
+      "id": "reject",
+      "action": "recommendation_feedback",
+      "payload": {
+        "recommendation_id": "volunteer-recruiting",
+        "stance": "rejected"
+      },
+      "assertions": [
+        {
+          "path": "/ok",
+          "op": "eq",
+          "expected": true
+        },
+        {
+          "path": "/profile/feedback/volunteer-recruiting/stance",
+          "op": "eq",
+          "expected": "rejected"
+        },
+        {
+          "path": "/profile/feedback/volunteer-recruiting/origin",
+          "op": "eq",
+          "expected": "button"
+        },
+        {
+          "path": "/profile/feedback/volunteer-recruiting/kind",
+          "op": "eq",
+          "expected": "rule"
+        }
+      ]
+    },
+    {
+      "id": "accept_other",
+      "action": "recommendation_feedback",
+      "payload": {
+        "recommendation_id": "club-consultation",
+        "stance": "accepted"
+      },
+      "assertions": [
+        {
+          "path": "/profile/feedback/club-consultation/stance",
+          "op": "eq",
+          "expected": "accepted"
+        }
+      ]
+    },
+    {
+      "id": "unknown",
+      "action": "recommendation_feedback",
+      "expected_ok": false,
+      "payload": {
+        "recommendation_id": "nope",
+        "stance": "rejected"
+      },
+      "assertions": [
+        {
+          "path": "/errors",
+          "op": "contains",
+          "expected": {
+            "code": "invalid_recommendation"
+          }
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/profile/result/recommendations",
+          "op": "contains",
+          "expected": {
+            "recommendation_id": "volunteer-recruiting"
+          }
+        },
+        {
+          "path": "/profile/report/content",
+          "op": "contains",
+          "expected": "Vom Nutzer abgelehnt"
+        },
+        {
+          "path": "/profile/report/content",
+          "op": "contains",
+          "expected": "Vom Nutzer befürwortet"
+        },
+        {
+          "path": "/profile/revision",
+          "op": "eq",
+          "expected": 3
+        }
+      ]
+    }
+  ]
+}

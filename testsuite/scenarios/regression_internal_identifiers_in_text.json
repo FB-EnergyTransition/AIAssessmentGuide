@@ -1,0 +1,402 @@
+{
+  "schema_version": 1,
+  "id": "regression_internal_identifiers_in_text",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "regression",
+    "llm",
+    "verein",
+    "recommendations",
+    "chat"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": []
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1980
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "membership_fees"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "tight"
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "complete",
+      "action": "complete",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "completed"
+        }
+      ]
+    },
+    {
+      "id": "recs",
+      "action": "profile_recommendations",
+      "assertions": [
+        {
+          "path": "/recommendations",
+          "op": "min_length",
+          "expected": 1
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "volunteer_situation"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "funding_source"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "founded_year"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "club_type"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "members_count"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "annual_budget_eur"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "(vgl. D"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "normalized_value"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "volunteer_situation"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "funding_source"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "founded_year"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "club_type"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "members_count"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "annual_budget_eur"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "(vgl. D"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "normalized_value"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "volunteer_situation"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "funding_source"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "founded_year"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "club_type"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "members_count"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "annual_budget_eur"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "(vgl. D"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "normalized_value"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "Quelle D"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "laut D"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": "laut W"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": " D1"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": " D2"
+        },
+        {
+          "path": "/recommendations/0/message",
+          "op": "not_contains",
+          "expected": " D3"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "Quelle D"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "laut D"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": "laut W"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": " D1"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": " D2"
+        },
+        {
+          "path": "/recommendations/0/rationale",
+          "op": "not_contains",
+          "expected": " D3"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "Quelle D"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "laut D"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": "laut W"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": " D1"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": " D2"
+        },
+        {
+          "path": "/recommendations/0/title",
+          "op": "not_contains",
+          "expected": " D3"
+        }
+      ]
+    },
+    {
+      "id": "chat",
+      "action": "create_conversation",
+      "payload": {
+        "title": "Mitglieder"
+      },
+      "assertions": []
+    },
+    {
+      "id": "ask",
+      "action": "send_conversation_message",
+      "payload": {
+        "text": "Lohnt sich für unseren Verein eine Mitgliederwerbung? Antworte in drei Sätzen."
+      },
+      "assertions": [
+        {
+          "path": "/conversation/messages/1/role",
+          "op": "eq",
+          "expected": "assistant"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "volunteer_situation"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "funding_source"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "founded_year"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "club_type"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "members_count"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "annual_budget_eur"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "(vgl. D"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "normalized_value"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "Quelle D"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "laut D"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": "laut W"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": " D1"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": " D2"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "not_contains",
+          "expected": " D3"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "regression",
+    "llm",
+    "verein",
+    "interpretation"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "id": "regression_number_words_eur",
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1962
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 140
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "donations"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "critical"
+      },
+      "assertions": []
+    },
+    {
+      "id": "eur_words",
+      "action": "submit_text_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "text": "achtundzwanzigtausend Euro im Jahr"
+      },
+      "assertions": [
+        {
+          "path": "/accepted_answer/normalized_value",
+          "op": "eq",
+          "expected": 28000
+        },
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "review"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

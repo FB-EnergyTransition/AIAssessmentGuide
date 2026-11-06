@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "regression",
+    "llm",
+    "verein",
+    "interpretation"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "id": "regression_unit_count_no_leak",
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "unit_count",
+      "action": "submit_text_answer",
+      "payload": {
+        "question_id": "club_type",
+        "text": "Es handelt sich um einen Musikverein mit 12 Registern."
+      },
+      "assertions": [
+        {
+          "path": "/accepted_answer/normalized_value",
+          "op": "eq",
+          "expected": "culture"
+        },
+        {
+          "path": "/current_question/question_id",
+          "op": "eq",
+          "expected": "founded_year"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

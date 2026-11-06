@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "regression",
+    "llm",
+    "verein",
+    "interpretation"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "id": "regression_counter_question_not_answered",
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "counter_question",
+      "action": "submit_text_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "text": "Hm, weiß ich nicht, ist das wichtig?"
+      },
+      "expected_ok": false,
+      "assertions": [
+        {
+          "path": "/validation_errors",
+          "op": "contains",
+          "expected": {
+            "field_key": "founded_year",
+            "code": "not_answered"
+          }
+        },
+        {
+          "path": "/current_question/question_id",
+          "op": "eq",
+          "expected": "founded_year"
+        }
+      ]
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": null
+      },
+      "assertions": [
+        {
+          "path": "/accepted_answer/normalized_value",
+          "op": "eq",
+          "expected": null
+        },
+        {
+          "path": "/current_question/question_id",
+          "op": "eq",
+          "expected": "members_count"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

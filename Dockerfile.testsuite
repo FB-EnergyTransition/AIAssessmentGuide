@@ -1,0 +1,19 @@
+FROM python:3.12-slim AS runtime
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+RUN pip install --no-cache-dir uv && uv sync --frozen --no-dev
+COPY guideos ./guideos
+COPY domain_packs ./domain_packs
+COPY testsuite ./testsuite
+ARG GUIDEOS_TESTSUITE_GIT_COMMIT=unknown
+ARG GUIDEOS_TESTSUITE_GIT_BRANCH=unknown
+ARG GUIDEOS_TESTSUITE_GIT_DIRTY=unknown
+RUN python -c 'import json,os; json.dump({"commit":os.environ["GUIDEOS_TESTSUITE_GIT_COMMIT"],"branch":os.environ["GUIDEOS_TESTSUITE_GIT_BRANCH"],"dirty":os.environ["GUIDEOS_TESTSUITE_GIT_DIRTY"]},open("testsuite-build.json","w"))'
+CMD ["uv", "run", "--no-sync", "python", "-m", "testsuite.runner"]
+
+FROM runtime AS verification
+RUN uv sync --frozen
+COPY tests ./tests
+COPY app.py ./
+CMD ["uv", "run", "--no-sync", "pytest", "tests/test_testsuite_postgres.py", "-q"]

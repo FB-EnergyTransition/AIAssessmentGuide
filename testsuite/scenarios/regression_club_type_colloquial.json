@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "regression",
+    "llm",
+    "verein",
+    "interpretation"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "id": "regression_club_type_colloquial",
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "social",
+      "action": "submit_text_answer",
+      "payload": {
+        "question_id": "club_type",
+        "text": "jo so ein kleiner musikverein halt, blasmusik in nem größeren ort"
+      },
+      "assertions": [
+        {
+          "path": "/accepted_answer/normalized_value",
+          "op": "eq",
+          "expected": "social"
+        },
+        {
+          "path": "/current_question/question_id",
+          "op": "eq",
+          "expected": "founded_year"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

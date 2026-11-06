@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "id": "verein_profile_fact_update",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "deterministic",
+    "verein",
+    "profile",
+    "workflow"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": false,
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": []
+    },
+    {
+      "id": "too_early",
+      "action": "update_profile_fact",
+      "expected_ok": false,
+      "payload": {
+        "field_key": "funding_source",
+        "value": "membership_fees"
+      },
+      "assertions": [
+        {
+          "path": "/errors",
+          "op": "contains",
+          "expected": {
+            "code": "profile_not_found"
+          }
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1980
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "public_grants"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "tight"
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "complete",
+      "action": "complete",
+      "assertions": [
+        {
+          "path": "/result/reason_codes",
+          "op": "contains",
+          "expected": "GRANTS_DEPENDENT"
+        }
+      ]
+    },
+    {
+      "id": "change_heating",
+      "action": "update_profile_fact",
+      "payload": {
+        "field_key": "funding_source",
+        "value": "Mitgliedsbeiträge",
+        "raw_answer": "Wir leben jetzt von Mitgliedsbeiträgen"
+      },
+      "assertions": [
+        {
+          "path": "/ok",
+          "op": "eq",
+          "expected": true
+        },
+        {
+          "path": "/changed_field",
+          "op": "eq",
+          "expected": "funding_source"
+        },
+        {
+          "path": "/previous_value",
+          "op": "eq",
+          "expected": "public_grants"
+        },
+        {
+          "path": "/result_changed",
+          "op": "eq",
+          "expected": true
+        },
+        {
+          "path": "/open_questions",
+          "op": "eq",
+          "expected": []
+        },
+        {
+          "path": "/profile/answers/funding_source/normalized_value",
+          "op": "eq",
+          "expected": "membership_fees"
+        },
+        {
+          "path": "/profile/answers/funding_source/origin",
+          "op": "eq",
+          "expected": "chat_update"
+        },
+        {
+          "path": "/profile/result/reason_codes",
+          "op": "not_contains",
+          "expected": "GRANTS_DEPENDENT"
+        },
+        {
+          "path": "/profile/revision",
+          "op": "eq",
+          "expected": 2
+        }
+      ]
+    },
+    {
+      "id": "add_consumption",
+      "action": "update_profile_fact",
+      "payload": {
+        "field_key": "annual_budget_eur",
+        "value": 15000
+      },
+      "assertions": [
+        {
+          "path": "/ok",
+          "op": "eq",
+          "expected": true
+        },
+        {
+          "path": "/profile/result/reason_codes",
+          "op": "not_contains",
+          "expected": "MISSING_BUDGET"
+        }
+      ]
+    },
+    {
+      "id": "invalid_year",
+      "action": "update_profile_fact",
+      "expected_ok": false,
+      "payload": {
+        "field_key": "founded_year",
+        "value": 1500
+      },
+      "assertions": [
+        {
+          "path": "/errors",
+          "op": "contains",
+          "expected": {
+            "code": "validation_failed",
+            "validation_code": "below_minimum"
+          }
+        }
+      ]
+    },
+    {
+      "id": "unknown_field",
+      "action": "update_profile_fact",
+      "expected_ok": false,
+      "payload": {
+        "field_key": "roof_colour",
+        "value": "rot"
+      },
+      "assertions": [
+        {
+          "path": "/errors",
+          "op": "contains",
+          "expected": {
+            "code": "invalid_question"
+          }
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/profile/revision",
+          "op": "eq",
+          "expected": 3
+        },
+        {
+          "path": "/profile/answers/founded_year/normalized_value",
+          "op": "eq",
+          "expected": 1980
+        },
+        {
+          "path": "/profile/report/content",
+          "op": "contains",
+          "expected": "geändert am"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

@@ -1,0 +1,18 @@
+# Beispiel fuer ein lokales Entwicklungs-Override. Nicht direkt verwendet:
+#   cp compose.override.example.yaml compose.override.yaml
+# Docker Compose laedt compose.override.yaml automatisch (git-ignoriert) und gibt
+# Streamlit damit auf allen Interfaces frei, um die App ohne Reverse-Proxy per
+# IP aus dem Netz zu erreichen. Auf der Pilot-VM darf keine compose.override.yaml
+# existieren; dort bleibt 127.0.0.1 plus Reverse-Proxy. Benoetigt Compose >= 2.24
+# wegen des !override-Tags.
+services:
+  app:
+    ports: !override
+      - "8501:8501"
+  # Optional: Pilot-Postgres fuer Host-Prozesse erreichbar machen, etwa fuer eine
+  # lokale Test-Oberflaeche mit GUIDEOS_DATABASE_URL (siehe README) oder die
+  # PostgreSQL-Integrationstests (GUIDEOS_TEST_POSTGRES_URL). 5432 kann auf dem
+  # Host bereits belegt sein, deshalb ein anderer Port.
+  postgres:
+    ports:
+      - "127.0.0.1:5434:5432"

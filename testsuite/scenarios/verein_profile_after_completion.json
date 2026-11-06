@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "id": "verein_profile_after_completion",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "verein",
+    "profile"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": false,
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "no_profile_yet",
+      "action": "get_profile",
+      "expected_ok": false,
+      "assertions": [
+        {
+          "path": "/errors",
+          "op": "contains",
+          "expected": {
+            "code": "profile_not_found"
+          }
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1980
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "public_grants"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "tight"
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "complete",
+      "action": "complete",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "completed"
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/ok",
+          "op": "eq",
+          "expected": true
+        },
+        {
+          "path": "/profile/domain_id",
+          "op": "eq",
+          "expected": "verein-demo"
+        },
+        {
+          "path": "/profile/revision",
+          "op": "eq",
+          "expected": 1
+        },
+        {
+          "path": "/profile/answers/funding_source/display_value",
+          "op": "eq",
+          "expected": "Öffentliche Förderungen"
+        },
+        {
+          "path": "/profile/answers/funding_source/origin",
+          "op": "eq",
+          "expected": "assessment"
+        },
+        {
+          "path": "/profile/result/recommendations",
+          "op": "contains",
+          "expected": {
+            "recommendation_id": "volunteer-recruiting",
+            "source": "rule"
+          }
+        },
+        {
+          "path": "/profile/report/content",
+          "op": "exists"
+        },
+        {
+          "path": "/profile/source_session_id",
+          "op": "exists"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

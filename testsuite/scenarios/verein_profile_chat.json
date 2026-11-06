@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "id": "verein_profile_chat",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "llm",
+    "verein",
+    "profile",
+    "chat",
+    "recommendations"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "review": {
+    "persona": "sportverein_gefoerdert",
+    "persona_label": "Sportverein von 1980, öffentlich gefördert, Ehrenamt knapp",
+    "kind": "advisory",
+    "check": "Nennt die Antwort die im Profil gespeicherten Angaben (öffentliche Förderungen, 1980) korrekt und ohne erfundene Details?"
+  },
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1980
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "public_grants"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "tight"
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "complete",
+      "action": "complete",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "completed"
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/profile/answers/funding_source/display_value",
+          "op": "eq",
+          "expected": "Öffentliche Förderungen"
+        },
+        {
+          "path": "/profile/result/knowledge_recommendations",
+          "op": "eq",
+          "expected": []
+        }
+      ]
+    },
+    {
+      "id": "chat",
+      "action": "create_conversation",
+      "payload": {
+        "title": "Profil"
+      },
+      "assertions": [
+        {
+          "path": "/conversation/profile_id",
+          "op": "exists"
+        }
+      ]
+    },
+    {
+      "id": "ask_profile",
+      "action": "send_conversation_message",
+      "payload": {
+        "text": "Welche Einnahmequelle und welches Gründungsjahr habe ich angegeben? Antworte in einem Satz."
+      },
+      "assertions": [
+        {
+          "path": "/conversation/messages/1/role",
+          "op": "eq",
+          "expected": "assistant"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "contains",
+          "expected": "Öffentliche Förderungen"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "contains",
+          "expected": "1980"
+        },
+        {
+          "path": "/conversation/messages/1/sections",
+          "op": "min_length",
+          "expected": 1
+        }
+      ]
+    },
+    {
+      "id": "recs",
+      "action": "profile_recommendations",
+      "assertions": [
+        {
+          "path": "/ok",
+          "op": "eq",
+          "expected": true
+        },
+        {
+          "path": "/recommendations",
+          "op": "contains",
+          "expected": {
+            "source": "llm"
+          }
+        },
+        {
+          "path": "/recommendations/0/evidence_fields",
+          "op": "min_length",
+          "expected": 1
+        }
+      ]
+    },
+    {
+      "id": "profile_after",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/profile/result/knowledge_recommendations",
+          "op": "contains",
+          "expected": {
+            "source": "llm"
+          }
+        },
+        {
+          "path": "/profile/result/knowledge_generation/error_code",
+          "op": "eq",
+          "expected": null
+        },
+        {
+          "path": "/profile/result/knowledge_generation/prompt_version",
+          "op": "exists"
+        },
+        {
+          "path": "/profile/revision",
+          "op": "eq",
+          "expected": 2
+        },
+        {
+          "path": "/profile/report/content",
+          "op": "contains",
+          "expected": "Hinweise aus Wissensquellen"
+        }
+      ]
+    },
+    {
+      "id": "ask_again",
+      "action": "send_conversation_message",
+      "payload": {
+        "text": "Was weißt du über meinen Verein? Antworte in zwei Sätzen."
+      },
+      "assertions": [
+        {
+          "path": "/conversation/messages/3/role",
+          "op": "eq",
+          "expected": "assistant"
+        },
+        {
+          "path": "/conversation/messages/3/sections/0/sources",
+          "op": "min_length",
+          "expected": 1
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

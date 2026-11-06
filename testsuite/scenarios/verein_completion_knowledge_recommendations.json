@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "id": "verein_completion_knowledge_recommendations",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "llm",
+    "verein",
+    "recommendations"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1980
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "public_grants"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "tight"
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "review"
+        }
+      ]
+    },
+    {
+      "id": "complete",
+      "action": "complete",
+      "payload": {
+        "knowledge_recommendations": true
+      },
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "completed"
+        },
+        {
+          "path": "/result/recommendations",
+          "op": "contains",
+          "expected": {
+            "recommendation_id": "volunteer-recruiting",
+            "source": "rule"
+          }
+        },
+        {
+          "path": "/result/knowledge_recommendations",
+          "op": "min_length",
+          "expected": 1
+        },
+        {
+          "path": "/result/knowledge_recommendations",
+          "op": "contains",
+          "expected": {
+            "source": "llm"
+          }
+        },
+        {
+          "path": "/result/knowledge_recommendations/0/evidence_fields",
+          "op": "exists"
+        },
+        {
+          "path": "/result/knowledge_recommendations/0/sources",
+          "op": "exists"
+        },
+        {
+          "path": "/result/knowledge_generation/error_code",
+          "op": "eq",
+          "expected": null
+        },
+        {
+          "path": "/result/knowledge_generation/model",
+          "op": "exists"
+        },
+        {
+          "path": "/result/knowledge_generation/prompt_version",
+          "op": "exists"
+        },
+        {
+          "path": "/result/knowledge_generation/retrieval_mode",
+          "op": "exists"
+        }
+      ]
+    },
+    {
+      "id": "session_persisted",
+      "action": "get_session",
+      "assertions": [
+        {
+          "path": "/result/knowledge_recommendations",
+          "op": "contains",
+          "expected": {
+            "source": "llm"
+          }
+        },
+        {
+          "path": "/result/knowledge_generation/error_code",
+          "op": "eq",
+          "expected": null
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/profile/result/knowledge_recommendations",
+          "op": "contains",
+          "expected": {
+            "source": "llm"
+          }
+        },
+        {
+          "path": "/profile/result/knowledge_generation/error_code",
+          "op": "eq",
+          "expected": null
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

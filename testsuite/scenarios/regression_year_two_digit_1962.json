@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "version": "1.1.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "regression",
+    "llm",
+    "verein",
+    "interpretation"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "id": "regression_year_two_digit_1962",
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "year_two_digit",
+      "action": "submit_text_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "text": "Anfang der Sechziger, genau 62, da hab ich gerade meine Lehre angefangen."
+      },
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        },
+        {
+          "path": "/current_question/question_id",
+          "op": "exists"
+        }
+      ],
+      "expected_ok": null
+    },
+    {
+      "id": "year_follow_up",
+      "action": "submit_text_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "text": "1962"
+      },
+      "expected_ok": null,
+      "assertions": []
+    },
+    {
+      "id": "year_stored",
+      "action": "get_session",
+      "assertions": [
+        {
+          "path": "/answers/founded_year/normalized_value",
+          "op": "eq",
+          "expected": 1962
+        },
+        {
+          "path": "/current_question/question_id",
+          "op": "eq",
+          "expected": "members_count"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

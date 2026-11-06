@@ -1,0 +1,221 @@
+{
+  "domain_id": "verein-demo",
+  "version": "1.0.0",
+  "name": "Vereins-Check Demo",
+  "description": "Technische Demo für einen einfachen Check der Vereinsorganisation. Keine Rechts- oder Steuerberatung.",
+  "default_locale": "de",
+  "advisory_guidance": "Der Kontext ist Österreich: Vereine unterliegen dem Vereinsgesetz 2002 und sind im Zentralen Vereinsregister eingetragen. Nenne keine Gesetze, Förderprogramme oder Stellen, die nur in anderen Ländern gelten. Fristen, Förderhöhen und steuerliche Grenzen nennst du nur, wenn sie in der Wissensbasis stehen, und ordnest Beträge genau der Stelle und Zielgruppe zu, bei denen sie in der Quelle stehen; sonst verweist du auf die Vereinsservicestelle des Bundeslandes oder auf eine Steuerberatung. Welche Funktion die Person im Verein hat, wurde nicht erhoben; weise bei Änderungen an Statuten, Finanzen und Mitgliedsbeiträgen darauf hin, dass darüber Vorstand oder Generalversammlung entscheiden.",
+  "questions": [
+    {
+      "question_id": "club_type",
+      "field_key": "club_type",
+      "text": "Welche Art von Verein ist es?",
+      "field_type": "select",
+      "required": true,
+      "options": [
+        {
+          "value": "sports",
+          "label": "Sportverein"
+        },
+        {
+          "value": "culture",
+          "label": "Kulturverein"
+        },
+        {
+          "value": "social",
+          "label": "Sozial- oder Hilfsverein"
+        },
+        {
+          "value": "other",
+          "label": "Anderer Verein"
+        }
+      ],
+      "help_text": "Gemeint ist der Hauptzweck des Vereins, so wie er in den Statuten steht. Sportverein: Training, Wettkämpfe oder Breitensport, auch mit mehreren Sektionen. Kulturverein: Musik, Theater, Brauchtum, Bildung oder Kunst. Sozial- oder Hilfsverein: Unterstützung bestimmter Personengruppen, Rettungs- und Hilfsdienste, Nachbarschaftshilfe. Anderer Verein: alles Übrige, etwa Hobby-, Eltern- oder Fördervereine. Maßgeblich ist der Zweck, nicht die Größe; eine grobe Zuordnung reicht, die genaue Formulierung der Statuten musst du nicht kennen."
+    },
+    {
+      "question_id": "founded_year",
+      "field_key": "founded_year",
+      "text": "In welchem Jahr wurde der Verein gegründet?",
+      "field_type": "integer",
+      "required": true,
+      "allow_unknown": true,
+      "validation": {
+        "minimum": 1800,
+        "maximum": 2026
+      },
+      "help_text": "Das Jahr der Gründungsversammlung, als vierstellige Zahl. Eine ungefähre Angabe reicht aus. Wenn du das Gründungsjahr nicht kennst, kannst du die Frage als unbekannt speichern; die Einordnung wird dann etwas grober, der Check bleibt sinnvoll."
+    },
+    {
+      "question_id": "members_count",
+      "field_key": "members_count",
+      "text": "Wie viele Mitglieder hat der Verein?",
+      "field_type": "number",
+      "required": true,
+      "validation": {
+        "minimum": 2,
+        "maximum": 100000
+      },
+      "help_text": "Die Zahl der Mitglieder laut Mitgliederliste, ordentliche und unterstützende Mitglieder zusammen. Gezählt werden Mitglieder, nicht Funktionärinnen oder Funktionäre und nicht die Sektionen. Ein Schätzwert reicht aus; die Zahl steht meist im letzten Jahresbericht oder im Protokoll der Generalversammlung."
+    },
+    {
+      "question_id": "funding_source",
+      "field_key": "funding_source",
+      "text": "Woher stammt der Großteil der Einnahmen?",
+      "field_type": "select",
+      "required": true,
+      "options": [
+        {
+          "value": "membership_fees",
+          "label": "Mitgliedsbeiträge"
+        },
+        {
+          "value": "public_grants",
+          "label": "Öffentliche Förderungen"
+        },
+        {
+          "value": "donations",
+          "label": "Spenden und Sponsoring"
+        },
+        {
+          "value": "events",
+          "label": "Veranstaltungen und Verkauf"
+        },
+        {
+          "value": "mixed",
+          "label": "Gemischt, keine Quelle überwiegt"
+        },
+        {
+          "value": "other",
+          "label": "Andere"
+        }
+      ],
+      "help_text": "Die Einnahmequelle, die im letzten Vereinsjahr den größten Anteil hatte. Mitgliedsbeiträge: laufende Beiträge der Mitglieder. Öffentliche Förderungen: Gemeinde, Land, Bund oder Dachverband. Spenden und Sponsoring: private Zuwendungen und Unternehmen. Veranstaltungen und Verkauf: Feste, Eintritte, Kantine, Merchandise. Gemischt: keine Quelle macht mehr als die Hälfte aus. Andere: zum Beispiel Vermögenserträge oder Vermietung."
+    },
+    {
+      "question_id": "volunteer_situation",
+      "field_key": "volunteer_situation",
+      "text": "Wie schätzt du die Lage bei den Ehrenamtlichen ein?",
+      "field_type": "select",
+      "required": true,
+      "allow_unknown": true,
+      "options": [
+        {
+          "value": "sufficient",
+          "label": "Ausreichend"
+        },
+        {
+          "value": "tight",
+          "label": "Knapp"
+        },
+        {
+          "value": "critical",
+          "label": "Kritisch"
+        }
+      ],
+      "help_text": "Eine Einschätzung reicht aus. Ausreichend: Vorstand und Helferinnen und Helfer sind besetzt, Nachfolgen sind geregelt. Knapp: Aufgaben werden erledigt, hängen aber an wenigen Personen. Kritisch: Funktionen sind unbesetzt oder Veranstaltungen fallen aus, weil Helfende fehlen. Wenn du es nicht einschätzen kannst, kannst du die Frage als unbekannt speichern."
+    },
+    {
+      "question_id": "annual_budget_eur",
+      "field_key": "annual_budget_eur",
+      "text": "Wie hoch sind die jährlichen Ausgaben des Vereins in Euro?",
+      "help_text": "Optional. Der Wert verbessert die Einordnung der Vereinsfinanzen. Die Summe der Ausgaben eines Vereinsjahres steht im Rechnungsabschluss oder im Kassabericht der Generalversammlung. Wenn du den Wert nicht kennst, kannst du die Frage als unbekannt speichern.",
+      "field_type": "number",
+      "required": false,
+      "allow_unknown": true,
+      "validation": {
+        "minimum": 0,
+        "maximum": 10000000
+      }
+    }
+  ],
+  "rules": [
+    {
+      "rule_id": "grants-dependent",
+      "field_key": "funding_source",
+      "operator": "in",
+      "value": [
+        "public_grants",
+        "donations"
+      ],
+      "reason_code": "GRANTS_DEPENDENT",
+      "recommendation_ids": [
+        "funding-diversification"
+      ],
+      "source_reference": "Demo-Annahme des Vereins-Checks, kein fachlicher Standard"
+    },
+    {
+      "rule_id": "volunteers-at-risk",
+      "field_key": "volunteer_situation",
+      "operator": "in",
+      "value": [
+        "tight",
+        "critical",
+        null
+      ],
+      "reason_code": "VOLUNTEERS_AT_RISK",
+      "recommendation_ids": [
+        "volunteer-recruiting"
+      ],
+      "source_reference": "Demo-Annahme des Vereins-Checks, kein fachlicher Standard"
+    },
+    {
+      "rule_id": "old-statutes",
+      "field_key": "founded_year",
+      "operator": "lt",
+      "value": 2002,
+      "reason_code": "OLD_STATUTES",
+      "recommendation_ids": [
+        "club-consultation"
+      ],
+      "source_reference": "Vereinsgesetz 2002 (VerG), BGBl. I Nr. 66/2002: Vereine, die davor gegründet wurden, sollten ihre Statuten gegen das geltende Gesetz prüfen; Demo-Annahme"
+    },
+    {
+      "rule_id": "high-budget-per-member",
+      "field_key": "annual_budget_eur",
+      "divisor_field_key": "members_count",
+      "operator": "gte",
+      "value": 150,
+      "reason_code": "HIGH_BUDGET_PER_MEMBER",
+      "recommendation_ids": [
+        "club-consultation"
+      ],
+      "source_reference": "Demo-Annahme des Vereins-Checks (Ausgaben je Mitglied und Jahr), kein fachlicher Standard"
+    },
+    {
+      "rule_id": "missing-budget",
+      "field_key": "annual_budget_eur",
+      "operator": "is_missing",
+      "reason_code": "MISSING_BUDGET",
+      "recommendation_ids": [
+        "collect-budget"
+      ],
+      "source_reference": "Demo-Annahme des Vereins-Checks, kein fachlicher Standard"
+    }
+  ],
+  "recommendations": [
+    {
+      "recommendation_id": "collect-budget",
+      "priority": 1,
+      "title": "Finanzdaten erfassen",
+      "message": "Erfasse die jährlichen Ausgaben des Vereins für eine belastbarere Einordnung der Finanzen."
+    },
+    {
+      "recommendation_id": "volunteer-recruiting",
+      "priority": 2,
+      "title": "Ehrenamt sichern",
+      "message": "Plane, wie neue Helferinnen und Helfer gewonnen und Funktionen im Vorstand nachbesetzt werden."
+    },
+    {
+      "recommendation_id": "funding-diversification",
+      "priority": 3,
+      "title": "Einnahmen breiter aufstellen",
+      "message": "Prüfe weitere Einnahmequellen, damit der Verein nicht von einer einzelnen Förderung oder Spende abhängt."
+    },
+    {
+      "recommendation_id": "club-consultation",
+      "priority": 4,
+      "title": "Vereinsberatung einholen",
+      "message": "Eine Vereinsservicestelle oder Steuerberatung kann Statuten, Finanzen und die nächsten Schritte am konkreten Verein bewerten."
+    }
+  ]
+}

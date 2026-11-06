@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "regression",
+    "llm",
+    "verein",
+    "interpretation"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "id": "regression_year_words_help_1962",
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "help_year_words",
+      "action": "question_help",
+      "payload": {
+        "question_id": "founded_year",
+        "text": "Der Verein ist von neunzehnhundertzweiundsechzig."
+      },
+      "assertions": [
+        {
+          "path": "/current_question/question_id",
+          "op": "eq",
+          "expected": "founded_year"
+        },
+        {
+          "path": "/chat_messages",
+          "op": "contains",
+          "expected": {
+            "role": "assistant",
+            "scope": "question_help",
+            "proposed_answer": {
+              "question_id": "founded_year",
+              "normalized_value": 1962
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

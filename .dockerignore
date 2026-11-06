@@ -1,0 +1,7 @@
+.git
+.guideos
+.pytest_cache
+.venv
+__pycache__
+*.pyc
+.env

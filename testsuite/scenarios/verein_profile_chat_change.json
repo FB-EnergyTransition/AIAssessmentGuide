@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "id": "verein_profile_chat_change",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "llm",
+    "verein",
+    "profile",
+    "chat",
+    "change"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "review": {
+    "persona": "sportverein_umstieg",
+    "persona_label": "Sportverein von 1980, von Förderungen auf Mitgliedsbeiträge gewechselt",
+    "kind": "edge",
+    "check": "Erkennt der Chat die Änderung, fragt nach, übernimmt erst nach Ja und behandelt die Überlegung zum Vereinsfest nicht als Änderung?"
+  },
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": []
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1980
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "public_grants"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "tight"
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": []
+    },
+    {
+      "id": "complete",
+      "action": "complete",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "completed"
+        }
+      ]
+    },
+    {
+      "id": "chat",
+      "action": "create_conversation",
+      "payload": {
+        "title": "Änderung"
+      },
+      "assertions": []
+    },
+    {
+      "id": "state_change",
+      "action": "send_conversation_message",
+      "payload": {
+        "text": "Inzwischen leben wir hauptsächlich von Mitgliedsbeiträgen, die Förderung ist weggefallen."
+      },
+      "assertions": [
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "contains",
+          "expected": "Soll ich deine Angabe ändern?"
+        },
+        {
+          "path": "/conversation/messages/1/content",
+          "op": "contains",
+          "expected": "Mitgliedsbeiträge"
+        },
+        {
+          "path": "/conversation/pending/kind",
+          "op": "eq",
+          "expected": "confirm_change"
+        },
+        {
+          "path": "/conversation/pending/field_key",
+          "op": "eq",
+          "expected": "funding_source"
+        },
+        {
+          "path": "/conversation/pending/value",
+          "op": "eq",
+          "expected": "membership_fees"
+        }
+      ]
+    },
+    {
+      "id": "unchanged_yet",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/profile/answers/funding_source/normalized_value",
+          "op": "eq",
+          "expected": "public_grants"
+        }
+      ]
+    },
+    {
+      "id": "confirm",
+      "action": "send_conversation_message",
+      "payload": {
+        "text": "Ja"
+      },
+      "assertions": [
+        {
+          "path": "/conversation/messages/3/content",
+          "op": "contains",
+          "expected": "Übernommen"
+        },
+        {
+          "path": "/conversation/messages/3/content",
+          "op": "contains",
+          "expected": "neu berechnet"
+        },
+        {
+          "path": "/conversation/pending",
+          "op": "eq",
+          "expected": null
+        }
+      ]
+    },
+    {
+      "id": "changed",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/profile/answers/funding_source/normalized_value",
+          "op": "eq",
+          "expected": "membership_fees"
+        },
+        {
+          "path": "/profile/answers/funding_source/origin",
+          "op": "eq",
+          "expected": "chat_update"
+        },
+        {
+          "path": "/profile/result/reason_codes",
+          "op": "not_contains",
+          "expected": "GRANTS_DEPENDENT"
+        }
+      ]
+    },
+    {
+      "id": "hypothetical",
+      "action": "send_conversation_message",
+      "payload": {
+        "text": "Ich überlege, ob sich ein Vereinsfest lohnen würde. Antworte in zwei Sätzen."
+      },
+      "assertions": [
+        {
+          "path": "/conversation/messages/5/role",
+          "op": "eq",
+          "expected": "assistant"
+        },
+        {
+          "path": "/conversation/pending",
+          "op": "eq",
+          "expected": null
+        },
+        {
+          "path": "/conversation/messages/5/content",
+          "op": "not_contains",
+          "expected": "Soll ich deine Angabe ändern?"
+        }
+      ]
+    },
+    {
+      "id": "still_changed",
+      "action": "get_profile",
+      "assertions": [
+        {
+          "path": "/profile/answers/funding_source/normalized_value",
+          "op": "eq",
+          "expected": "membership_fees"
+        },
+        {
+          "path": "/profile/revision",
+          "op": "eq",
+          "expected": 2
+        }
+      ]
+    },
+    {
+      "id": "ask_profile",
+      "action": "send_conversation_message",
+      "payload": {
+        "text": "Welche Einnahmequelle habe ich laut meinem Profil? Antworte in einem Satz."
+      },
+      "assertions": [
+        {
+          "path": "/conversation/messages/7/content",
+          "op": "contains",
+          "expected": "Mitgliedsbeiträge"
+        }
+      ]
+    }
+  ],
+  "assertions": []
+}

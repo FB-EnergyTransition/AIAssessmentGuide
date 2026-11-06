@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "id": "verein_standard_sportverein",
+  "version": "1.0.0",
+  "domain_id": "verein-demo",
+  "domain_version": "1.0.0",
+  "tags": [
+    "deterministic",
+    "verein",
+    "standard"
+  ],
+  "data_classification": "synthetic",
+  "persist_raw": true,
+  "steps": [
+    {
+      "id": "start",
+      "action": "start_assessment",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "in_progress"
+        }
+      ]
+    },
+    {
+      "id": "club_type",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "club_type",
+        "value": "sports"
+      },
+      "assertions": []
+    },
+    {
+      "id": "founded_year",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "founded_year",
+        "value": 1980
+      },
+      "assertions": []
+    },
+    {
+      "id": "members_count",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "members_count",
+        "value": 120
+      },
+      "assertions": []
+    },
+    {
+      "id": "funding_source",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "funding_source",
+        "value": "public_grants"
+      },
+      "assertions": []
+    },
+    {
+      "id": "volunteer_situation",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "volunteer_situation",
+        "value": "tight"
+      },
+      "assertions": []
+    },
+    {
+      "id": "annual_budget_eur",
+      "action": "submit_answer",
+      "payload": {
+        "question_id": "annual_budget_eur",
+        "value": null
+      },
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "review"
+        },
+        {
+          "path": "/progress/answered_required",
+          "op": "eq",
+          "expected": 5
+        }
+      ]
+    },
+    {
+      "id": "complete",
+      "action": "complete",
+      "assertions": [
+        {
+          "path": "/status",
+          "op": "eq",
+          "expected": "completed"
+        },
+        {
+          "path": "/result/reason_codes",
+          "op": "eq",
+          "expected": [
+            "GRANTS_DEPENDENT",
+            "VOLUNTEERS_AT_RISK",
+            "OLD_STATUTES",
+            "MISSING_BUDGET"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "report",
+      "action": "get_report",
+      "assertions": [
+        {
+          "path": "/report/format",
+          "op": "eq",
+          "expected": "markdown"
+        },
+        {
+          "path": "/report/content",
+          "op": "contains",
+          "expected": "1980"
+        }
+      ]
+    }
+  ],
+  "assertions": [
+    {
+      "path": "/result/reason_codes",
+      "op": "contains",
+      "expected": "GRANTS_DEPENDENT"
+    },
+    {
+      "path": "/result/reason_codes",
+      "op": "contains",
+      "expected": "VOLUNTEERS_AT_RISK"
+    },
+    {
+      "path": "/result/reason_codes",
+      "op": "contains",
+      "expected": "OLD_STATUTES"
+    },
+    {
+      "path": "/result/recommendations",
+      "op": "contains",
+      "expected": {
+        "recommendation_id": "funding-diversification"
+      }
+    },
+    {
+      "path": "/result/recommendations",
+      "op": "contains",
+      "expected": {
+        "recommendation_id": "volunteer-recruiting"
+      }
+    }
+  ]
+}

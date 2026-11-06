@@ -1,0 +1,78 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: guideos
+      POSTGRES_USER: guideos
+      POSTGRES_PASSWORD: ${GUIDEOS_POSTGRES_PASSWORD:?Set GUIDEOS_POSTGRES_PASSWORD in .env}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U guideos -d guideos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - guideos-postgres:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      target: app
+    # Der Pilot zeigt den Markdown-Bericht; ohne das Flag nach "--" bleibt das
+    # Assessment ein reines Chatfenster (siehe README).
+    command: ["sh", "-c", "uv run --no-sync python -m guideos.assessment.migrations && uv run --no-sync python -m guideos.pilot.retention --apply && uv run --no-sync streamlit run app.py --server.address 0.0.0.0 --server.port 8501 -- --show-report"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GUIDEOS_PILOT_MODE: "1"
+      GUIDEOS_TEST_PASSWORD: ${GUIDEOS_TEST_PASSWORD:?Set GUIDEOS_TEST_PASSWORD in .env}
+      GUIDEOS_DATABASE_URL: postgresql://guideos:${GUIDEOS_POSTGRES_PASSWORD}@postgres:5432/guideos
+      GUIDEOS_OLLAMA_ENDPOINT: ${GUIDEOS_OLLAMA_ENDPOINT:?Set GUIDEOS_OLLAMA_ENDPOINT in .env}
+      GUIDEOS_OLLAMA_MODEL: ${GUIDEOS_OLLAMA_MODEL:-gpt-oss:20b}
+      GUIDEOS_PROVIDER_TIMEOUT_SECONDS: ${GUIDEOS_PROVIDER_TIMEOUT_SECONDS:-120}
+      GUIDEOS_EMBEDDING_MODEL: ${GUIDEOS_EMBEDDING_MODEL:-}
+      GUIDEOS_RETENTION_DAYS: ${GUIDEOS_RETENTION_DAYS:-}
+      GUIDEOS_DOMAINS: ${GUIDEOS_DOMAINS:-}
+      GUIDEOS_LOG_LEVEL: ${GUIDEOS_LOG_LEVEL:-INFO}
+    ports:
+      - "127.0.0.1:8501:8501"
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=2)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Die REST-API (mit einem Web-Client, wenn das Image einen enthält):
+  # Pilot-Login mit Benutzername und Testpasswort, Session-Cookie; nur auf
+  # 127.0.0.1:8005 für den Reverse-Proxy. Wartet auf `app`, das die
+  # Migrationen anwendet.
+  api:
+    build:
+      context: .
+      target: api
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      GUIDEOS_PILOT_MODE: "1"
+      GUIDEOS_TEST_PASSWORD: ${GUIDEOS_TEST_PASSWORD:?Set GUIDEOS_TEST_PASSWORD in .env}
+      GUIDEOS_SESSION_SECRET: ${GUIDEOS_SESSION_SECRET:-}
+      GUIDEOS_COOKIE_SECURE: ${GUIDEOS_COOKIE_SECURE:-1}
+      GUIDEOS_DATABASE_URL: postgresql://guideos:${GUIDEOS_POSTGRES_PASSWORD}@postgres:5432/guideos
+      GUIDEOS_OLLAMA_ENDPOINT: ${GUIDEOS_OLLAMA_ENDPOINT:?Set GUIDEOS_OLLAMA_ENDPOINT in .env}
+      GUIDEOS_OLLAMA_MODEL: ${GUIDEOS_OLLAMA_MODEL:-gpt-oss:20b}
+      # Nur für Testphasen: Tester wählen das Modell im Web-Client (Header X-GuideOS-Model).
+      GUIDEOS_MODEL_SELECTION: ${GUIDEOS_MODEL_SELECTION:-0}
+      GUIDEOS_PROVIDER_TIMEOUT_SECONDS: ${GUIDEOS_PROVIDER_TIMEOUT_SECONDS:-120}
+      GUIDEOS_EMBEDDING_MODEL: ${GUIDEOS_EMBEDDING_MODEL:-}
+      GUIDEOS_LOG_LEVEL: ${GUIDEOS_LOG_LEVEL:-INFO}
+    ports:
+      - "127.0.0.1:8005:8000"
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=2)"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  guideos-postgres:
